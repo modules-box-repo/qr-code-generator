@@ -1,0 +1,380 @@
+<!-- Main layout of the QR studio application -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>QR Studio | Mobile QR Code Generator</title>
+  <meta name="description" content="Sleek, fast mobile QR code generator with high-resolution export, custom palettes, logos, and instant scan." />
+  <meta property="og:title" content="QR Studio | Mobile QR Code Generator" />
+  <meta property="og:description" content="Sleek, fast mobile QR code generator with high-resolution export, custom palettes, logos, and instant scan." />
+  <meta name="theme-color" content="#2563eb" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%232563eb' d='M2 2h8v8H2zm2 2v4h4V4zm8-2h10v8H12zm2 2v4h6V4zM2 14h8v8H2zm2 2v4h4v-4zm13-2h3v3h-3zm-5 0h3v3h-3zm3 3h3v3h-3zm-3 3h3v3h-3zm3 0h3v3h-3zm3-3h3v5h-3z'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/overlays.css">
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('qr_studio_theme');
+        if (t === 'dark' || (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <header class="header">
+    <div class="header-container">
+      <div class="logo-area">
+        <div class="logo-icon">
+          <svg class="icon" viewBox="0 0 24 24" style="fill:currentColor; stroke:none;"><path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm8-2h10v8H12V2zm2 2v4h6V4h-6zM2 14h8v8H2v-8zm2 2v4h4v-4H4zm13-2h3v3h-3v-3zm-5 0h3v3h-3v-3zm3 3h3v3h-3v-3zm-3 3h3v3h-3v-3zm3 0h3v3h-3v-3zm3-3h3v5h-3v-5z"/></svg>
+        </div>
+        <div class="logo-text">
+          <h1>QR Code Generator</h1>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="scannerOpenBtn" class="btn-icon" title="Scan QR Code" aria-label="Scan QR Code">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><line x1="7" y1="12" x2="17" y2="12"></line></svg>
+        </button>
+        <button id="historyOpenBtn" class="btn-icon" title="Saved QR Codes" aria-label="Saved QR Codes">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+        </button>
+        <button id="themeToggle" class="btn-icon" title="Toggle Theme" aria-label="Toggle Theme">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-layout">
+    <!-- QR Preview Section -->
+    <aside class="preview-column">
+      <div class="card preview-card preview-sticky">
+        <div class="canvas-container">
+          <canvas id="qrCanvas" width="600" height="600"></canvas>
+        </div>
+        <div id="previewTitle" class="preview-title">https://google.com</div>
+        <div class="action-buttons">
+          <button id="btnDownload" class="btn btn-primary">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            PNG
+          </button>
+          <button id="btnDownloadSvg" class="btn btn-outline">
+            <svg class="icon" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            SVG
+          </button>
+          <button id="btnCopy" class="btn btn-outline">
+            <svg class="icon" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            Copy
+          </button>
+          <button id="btnPrint" class="btn btn-outline">
+            <svg class="icon" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            Print
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Editor Column -->
+    <section class="editor-column">
+      <!-- Type Switcher -->
+      <nav class="type-nav">
+        <button class="type-btn active" data-type="url">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+          Link
+        </button>
+        <button class="type-btn" data-type="whatsapp">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+          WhatsApp
+        </button>
+        <button class="type-btn" data-type="wifi">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M1.42 9a16 16 0 0 1 21.16 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg>
+          Wi-Fi
+        </button>
+        <button class="type-btn" data-type="vcard">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          Contact
+        </button>
+        <button class="type-btn" data-type="text">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          Text
+        </button>
+        <button class="type-btn" data-type="phone">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+          Phone
+        </button>
+        <button class="type-btn" data-type="email">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          Email
+        </button>
+        <button class="type-btn" data-type="sms">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          SMS
+        </button>
+        <button class="type-btn" data-type="location">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          Location
+        </button>
+      </nav>
+
+      <!-- Dynamic Form -->
+      <div class="card">
+        <h2 class="section-title">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+          Content Details
+        </h2>
+        <div id="formContainer"></div>
+      </div>
+
+      <!-- Style Customizer -->
+      <div class="card">
+        <h2 class="section-title">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+          Style & Customization
+        </h2>
+
+        <!-- Dot Pattern -->
+        <div class="form-group">
+          <label class="form-label">QR Pattern Style</label>
+          <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:0.6rem;">
+            <button type="button" class="btn dot-btn active" data-dot="square" style="border:1px solid var(--border); background:var(--bg-card); color:var(--text-main);">Square</button>
+            <button type="button" class="btn dot-btn" data-dot="rounded" style="border:1px solid var(--border); background:var(--bg-card); color:var(--text-main);">Rounded</button>
+            <button type="button" class="btn dot-btn" data-dot="dots" style="border:1px solid var(--border); background:var(--bg-card); color:var(--text-main);">Dots</button>
+          </div>
+        </div>
+
+        <!-- Center Logo Selection -->
+        <div class="form-group">
+          <label class="form-label">Center Logo</label>
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.75rem;">
+            <button type="button" class="btn logo-btn active" data-logo="none" style="padding:0.5rem 0.85rem; border:1px solid var(--border); background:var(--bg-card); color:var(--text-main);">None</button>
+            <button type="button" class="btn logo-btn" data-logo="whatsapp" style="padding:0.5rem 0.85rem; border:1px solid var(--border); background:var(--bg-card); color:var(--text-main);">WhatsApp</button>
+            <button type="button" class="btn logo-btn" data-logo="wifi" style="padding:0.5rem 0.85rem; border:1px solid var(--border); background:var(--bg-card); color:var(--text-main);">Wi-Fi</button>
+            <button type="button" class="btn logo-btn" data-logo="globe" style="padding:0.5rem 0.85rem; border:1px solid var(--border); background:var(--bg-card); color:var(--text-main);">Web</button>
+            <button type="button" class="btn logo-btn" data-logo="phone" style="padding:0.5rem 0.85rem; border:1px solid var(--border); background:var(--bg-card); color:var(--text-main);">Phone</button>
+            <button type="button" class="btn logo-btn" data-logo="star" style="padding:0.5rem 0.85rem; border:1px solid var(--border); background:var(--bg-card); color:var(--text-main);">Star</button>
+          </div>
+          <div>
+            <label class="form-label" style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.4rem;">Or Upload Custom Logo</label>
+            <label for="customLogoInput" class="custom-file-upload">
+              <span id="customLogoName" class="custom-file-upload-label">No image chosen (PNG, JPG, SVG)</span>
+              <span class="custom-file-upload-btn">
+                <svg class="icon" style="width:16px; height:16px;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                Browse File
+              </span>
+              <input type="file" id="customLogoInput" accept="image/*" style="display:none;">
+            </label>
+          </div>
+        </div>
+
+        <!-- Frame Selection -->
+        <div class="form-group">
+          <label class="form-label">Frame Banner</label>
+          <select id="frameSelect" class="form-select">
+            <option value="none">No Frame</option>
+            <option value="simple-bottom">Bottom Banner</option>
+            <option value="simple-top">Top Banner</option>
+          </select>
+        </div>
+        <div id="frameTextGroup" class="form-group" style="display:none;">
+          <label class="form-label">Banner Text</label>
+          <input type="text" id="frameTextInput" class="form-input" value="SCAN ME">
+        </div>
+
+        <!-- Color Palette -->
+        <div class="form-group">
+          <label class="form-label">Colors & Presets</label>
+          <div class="color-presets">
+            <div class="color-swatch" data-color="#000000" style="background-color: #000000;" title="Black"></div>
+            <div class="color-swatch" data-color="#2563eb" style="background-color: #2563eb;" title="Blue"></div>
+            <div class="color-swatch" data-color="#059669" style="background-color: #059669;" title="Emerald"></div>
+            <div class="color-swatch" data-color="#7c3aed" style="background-color: #7c3aed;" title="Purple"></div>
+            <div class="color-swatch" data-color="#dc2626" style="background-color: #dc2626;" title="Red"></div>
+            <div class="color-swatch" data-color="#d97706" style="background-color: #d97706;" title="Amber"></div>
+          </div>
+          <div class="grid-2">
+            <div>
+              <label class="form-label">QR Color</label>
+              <button type="button" id="btnOpenFgColor" class="color-picker-trigger">
+                <span id="fgColorPreview" class="color-preview-pill" style="background-color: #000000;"></span>
+                <span id="fgColorText" class="color-value-text">#000000</span>
+              </button>
+            </div>
+            <div>
+              <label class="form-label">Background Color</label>
+              <button type="button" id="btnOpenBgColor" class="color-picker-trigger">
+                <span id="bgColorPreview" class="color-preview-pill" style="background-color: #ffffff;"></span>
+                <span id="bgColorText" class="color-value-text">#FFFFFF</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error Correction -->
+        <div class="form-group">
+          <label class="form-label">Error Correction (Redundancy)</label>
+          <select id="eclSelect" class="form-select">
+            <option value="L">L - Low (7%)</option>
+            <option value="M">M - Medium (15%)</option>
+            <option value="Q">Q - Quartile (25%)</option>
+            <option value="H" selected>H - High (30% - Best for Logos)</option>
+          </select>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Drawer Backdrop -->
+  <div id="drawerBackdrop" class="drawer-backdrop"></div>
+
+  <!-- History Drawer -->
+  <aside id="historyDrawer" class="drawer">
+    <div class="drawer-header">
+      <div style="display:flex; align-items:center; gap:0.5rem; font-weight:700; font-size:1.15rem;">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+        Saved QR Codes
+      </div>
+      <button id="historyCloseBtn" class="btn-icon" aria-label="Close History">
+        <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <div id="historyList" class="drawer-body"></div>
+    <div class="drawer-footer">
+      <button id="clearHistoryBtn" class="btn btn-outline" style="width:100%;">Clear All History</button>
+    </div>
+  </aside>
+
+  <!-- Scanner Modal -->
+  <div id="scannerModal" class="custom-modal">
+    <div class="custom-modal-card">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path></svg>
+          Scan QR Code
+        </div>
+        <button id="scannerCloseBtn" class="btn-icon" aria-label="Close">
+          <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="custom-modal-body">
+        <label for="scanFileInput" class="drop-zone" id="scanDropZone">
+          <div class="drop-zone-icon">
+            <svg class="icon" style="width:26px; height:26px;" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+          </div>
+          <div style="font-weight:600; font-size:1rem; margin-bottom:0.25rem;">Choose image or take photo</div>
+          <div style="font-size:0.85rem; color:var(--text-muted);">Supports PNG, JPG, WebP formats</div>
+          <input type="file" id="scanFileInput" accept="image/*" style="display:none;">
+        </label>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="btn btn-outline modal-close-trigger">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Print Modal -->
+  <div id="printModal" class="custom-modal">
+    <div class="custom-modal-card">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title">
+          <svg class="icon" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+          Print Preview
+        </div>
+        <button id="printModalCloseBtn" class="btn-icon" aria-label="Close">
+          <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="custom-modal-body">
+        <div class="print-sheet-preview">
+          <canvas id="printPreviewCanvas"></canvas>
+          <div id="printSheetTitle" class="print-sheet-title"></div>
+          <div style="font-size:0.85rem; color:#64748b;">Ready for print or PDF export</div>
+        </div>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="btn btn-outline modal-close-trigger">Cancel</button>
+        <button type="button" id="confirmPrintBtn" class="btn btn-primary">
+          <svg class="icon" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+          Print Now
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Confirm Dialog -->
+  <div id="confirmModal" class="custom-modal">
+    <div class="custom-modal-card" style="max-width:400px;">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title" id="confirmTitle">Confirm Action</div>
+      </div>
+      <div class="custom-modal-body" id="confirmMessage">Are you sure?</div>
+      <div class="custom-modal-footer">
+        <button type="button" id="confirmCancelBtn" class="btn btn-outline">Cancel</button>
+        <button type="button" id="confirmOkBtn" class="btn btn-primary" style="background-color:#dc2626;">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Color Picker Modal Dialog -->
+  <div id="colorPickerModal" class="custom-modal">
+    <div class="custom-modal-card" style="max-width:440px;">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title" id="colorPickerTitle">Choose Color</div>
+        <button id="colorPickerCloseBtn" class="btn-icon" aria-label="Close">
+          <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="custom-modal-body">
+        <!-- 2D Saturation / Value Area -->
+        <div id="colorSatVal" class="color-sat-val" style="background-color: #2563eb;">
+          <div style="position:absolute; inset:0; background:linear-gradient(to right, #fff, transparent);"></div>
+          <div style="position:absolute; inset:0; background:linear-gradient(to bottom, transparent, #000);"></div>
+          <div id="colorPointer" class="color-sat-val-pointer" style="left:100%; top:0%;"></div>
+        </div>
+
+        <!-- Hue Slider -->
+        <input type="range" id="colorHueSlider" min="0" max="360" value="220" class="hue-slider">
+
+        <!-- Palette Swatches -->
+        <div style="font-weight:600; font-size:0.85rem; margin-bottom:0.5rem; color:var(--text-muted);">Curated Colors</div>
+        <div class="color-palette-grid">
+          <button type="button" class="color-palette-btn" data-color="#000000" style="background-color:#000000;" title="Black"></button>
+          <button type="button" class="color-palette-btn" data-color="#ffffff" style="background-color:#ffffff;" title="White"></button>
+          <button type="button" class="color-palette-btn" data-color="#2563eb" style="background-color:#2563eb;" title="Blue"></button>
+          <button type="button" class="color-palette-btn" data-color="#059669" style="background-color:#059669;" title="Emerald"></button>
+          <button type="button" class="color-palette-btn" data-color="#7c3aed" style="background-color:#7c3aed;" title="Purple"></button>
+          <button type="button" class="color-palette-btn" data-color="#dc2626" style="background-color:#dc2626;" title="Red"></button>
+          <button type="button" class="color-palette-btn" data-color="#d97706" style="background-color:#d97706;" title="Amber"></button>
+          <button type="button" class="color-palette-btn" data-color="#0284c7" style="background-color:#0284c7;" title="Sky"></button>
+          <button type="button" class="color-palette-btn" data-color="#4f46e5" style="background-color:#4f46e5;" title="Indigo"></button>
+          <button type="button" class="color-palette-btn" data-color="#db2777" style="background-color:#db2777;" title="Pink"></button>
+          <button type="button" class="color-palette-btn" data-color="#16a34a" style="background-color:#16a34a;" title="Green"></button>
+          <button type="button" class="color-palette-btn" data-color="#475569" style="background-color:#475569;" title="Slate"></button>
+        </div>
+
+        <!-- HEX Input + Current Live Preview -->
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+          <div id="modalColorPreview" style="width:46px; height:46px; border-radius:12px; border:2px solid white; box-shadow:0 0 0 1px var(--border); background-color:#2563eb; flex-shrink:0;"></div>
+          <div style="flex:1;">
+            <label class="form-label" style="font-size:0.8rem; margin-bottom:0.25rem;">HEX Color Code</label>
+            <input type="text" id="colorHexInput" class="form-input" value="#2563EB" maxlength="7" style="font-family:monospace; font-weight:700; text-transform:uppercase;">
+          </div>
+        </div>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" id="colorPickerCancelBtn" class="btn btn-outline">Cancel</button>
+        <button type="button" id="colorPickerApplyBtn" class="btn btn-primary">Apply Color</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <!-- Pure JS Scripts (No npm dependencies needed) -->
+  <script src="js/qr-core.js"></script>
+  <script src="js/qr-renderer.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

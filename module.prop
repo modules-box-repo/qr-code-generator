@@ -1,0 +1,10 @@
+id=qr-code-generator
+name=QR Code Generator
+icon=icon.jpg
+description=Generate QR codes easily.
+author=YasserNull
+version=v1.0.0
+versionCode=1
+repository=https://github.com/modules-box-repo/qr-code-generator
+install=setup.sh
+permission=default
